@@ -33,6 +33,11 @@ This stack sets up a basic proactive monitoring and alerting environment on comm
 
 ## Usage 
 
+
+## Setup
+
+- Update `email` and `whitelistIps` in the serverless.yml custom section.
+
 ### Credentials:
 ```bash
 export AWS_PROFILE=<profile_name>
