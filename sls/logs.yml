@@ -1,0 +1,38 @@
+Resources:
+
+  SecurityCloudtrailLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: /aws/cloudtrail/${self:custom.baseName}
+      RetentionInDays: 60
+
+  CloudWatchLogsMetricsFilterAccessDenied:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.errorCode = "*UnauthorizedOperation") || ($.errorCode = "AccessDenied*") }'
+      LogGroupName: !Ref SecurityCloudtrailLogGroup
+      MetricTransformations:
+        - MetricValue: "1"
+          MetricNamespace: CloudTrailMetrics
+          MetricName: UnauthorizedAttemptCount
+          DefaultValue: 0
+
+  CloudWatchLogsMetricsFilterConsoleFailedAuth:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref SecurityCloudtrailLogGroup
+      FilterPattern: '{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }'
+      MetricTransformations:
+        - MetricValue: 1
+          MetricNamespace: CloudTrailMetrics
+          MetricName: ConsoleLoginFailures
+
+  CloudWatchLogsMetricsFilterIMDSv1:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref SecurityCloudtrailLogGroup
+      FilterPattern: '{ ($.eventName = RunInstances) && ($.responseElements.instancesSet.items[0].metadataOptions.httpTokens = "optional") }'
+      MetricTransformations:
+        - MetricValue: 1
+          MetricNamespace: CloudTrailMetrics
+          MetricName: IMDSv1RunInstance

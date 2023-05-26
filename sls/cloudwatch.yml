@@ -1,0 +1,87 @@
+Resources:
+
+  SecurityCloudtrailDashboard:
+    DependsOn: SecurityCloudtrailLogGroup
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: AWS-Security-Dashboard
+      DashboardBody: !Sub |
+        {
+            "widgets": [
+                {
+                    "height": 12,
+                    "width": 24,
+                    "y": 0,
+                    "x": 0,
+                    "type": "log",
+                    "properties": {
+                        "query": "SOURCE '${SecurityCloudtrailLogGroup}' | fields eventTime, eventName, eventSource, recipientAccountId as Account, userIdentity.sessionContext.sessionIssuer.userName as Principal, userIdentity.invokedBy as InvokedBy, errorCode\n\n\n\n | filter errorCode like /(Client.UnauthorizedOperation|AccessDenied)/",
+                        "region": "${self:provider.region}",
+                        "title": "Latest AccessDenied from CT",
+                        "view": "table"
+                    }
+                },
+                {
+                    "height": 6,
+                    "width": 24,
+                    "y": 12,
+                    "x": 0,
+                    "type": "log",
+                    "properties": {
+                        "query": "SOURCE '${SecurityCloudtrailLogGroup}' | fields eventTime, eventName, eventSource, userIdentity.sessionContext.sessionIssuer.userName as Principal, userIdentity.invokedBy as InvokedBy, responseElements.instancesSet.items.0.metadataOptions.httpTokens as IMDSv2\n\n | filter eventName like \"RunInstances\" and IMDSv2 like \"optional\"",
+                        "region": "${self:provider.region}",
+                        "title": "IMDSv1 RunInstances",
+                        "view": "table"
+                    }
+                }
+            ]
+        }
+
+  AlarmAccessDenied:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmName: Unauthorized API Call
+      AlarmDescription: Alarm on Unauthorized API Call
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 2
+      MetricName: UnauthorizedAttemptCount
+      Namespace: CloudTrailMetrics
+      Period: 3600
+      Statistic: Sum
+      Threshold: 1
+      AlarmActions:
+        - !Ref SecurityCloudtrailTopic
+      TreatMissingData: notBreaching
+
+  AlarmConsoleFailedAuth:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: Failed Console Login
+      AlarmDescription: Failed Console Login
+      MetricName: ConsoleLoginFailures
+      Namespace: CloudTrailMetrics
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityCloudtrailTopic
+      TreatMissingData: notBreaching
+
+  AlarmIMDSv1RunInstance:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: IMDSv1 RunInstance Detected
+      AlarmDescription: IMDSv1 RunInstance Detected
+      MetricName: IMDSv1RunInstance
+      Namespace: CloudTrailMetrics
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityCloudtrailTopic
+      TreatMissingData: notBreaching

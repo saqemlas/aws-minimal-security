@@ -1,0 +1,25 @@
+Resources:
+
+  SecurityCloudtrailTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Security Alarm
+      TopicName: ${self:custom.baseName}-alarm-topic-${self:provider.region}
+      Subscription:
+        - Protocol: email
+          Endpoint: ${self:custom.email}
+
+  SecurityCloudtrailTopicPolicy:
+    DependsOn: SecurityCloudtrailTopic
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: 
+        - !Ref SecurityCloudtrailTopic
+      PolicyDocument:
+        Statement:
+          - Sid: _cloudwatch_events
+            Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref SecurityCloudtrailTopic

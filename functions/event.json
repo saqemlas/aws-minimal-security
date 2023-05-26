@@ -1,0 +1,49 @@
+{
+    "account": "0123456789",
+    "detail":  {
+        "eventVersion": "1.08",
+        "userIdentity": {
+            "type": "AWSService",
+            "invokedBy": "ec2.amazonaws.com"
+        },
+        "eventTime": "2023-05-15T08:33:50Z",
+        "eventSource": "sts.amazonaws.com",
+        "eventName": "AssumeRole",
+        "awsRegion": "eu-west-1",
+        "sourceIPAddress": "ec2.amazonaws.com",
+        "userAgent": "ec2.amazonaws.com",
+        "requestParameters": {
+            "roleArn": "arn:aws:iam::0123456789:role/trading-bot-ingest-dev-ec2-role",
+            "roleSessionName": "i-0d083791d106c72df"
+        },
+        "responseElements": {
+            "credentials": {
+                "accessKeyId": "access-key-id",
+                "sessionToken": "session-token",
+                "expiration": "May 15, 2023, 3:08:50 PM"
+            }
+        },
+        "requestID": "37d1490b-291c-4a9c-bbe6-ebfd33b58400",
+        "eventID": "2d153d9e-cfa9-4fc4-afee-37cc74941948",
+        "readOnly": true,
+        "resources": [
+            {
+                "accountId": "0123456789",
+                "type": "AWS::IAM::Role",
+                "ARN": "arn:aws:iam::0123456789:role/trading-bot-ingest-dev-ec2-role"
+            }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "0123456789",
+        "sharedEventID": "163d8938-028a-4c3d-b537-eff154fb8462",
+        "eventCategory": "Management"
+    },
+    "detail-type": "AWS API Call via CloudTrail",
+    "id": "c692bfe1-48ec-b148-f984-6d50fdc57339",
+    "region": "eu-west-1",
+    "resources": [],
+    "source": "aws.ec2",
+    "time": "2022-12-01T13:48:54Z",
+    "version": "0"
+}

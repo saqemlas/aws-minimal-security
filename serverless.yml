@@ -1,0 +1,77 @@
+service: act-scr
+
+plugins:
+  - serverless-s3-cleaner
+  - serverless-esbuild
+  - serverless-iam-roles-per-function
+
+custom:
+  baseName: ${self:service}-${self:provider.stage}
+
+  email: ''
+  whitelistIps: '[""]'
+  
+  serverless-s3-cleaner:
+    buckets:
+      # pass dummy values on initial deployment, cloudformation has not created outputs yet
+      - ${cf:${self:custom.baseName}.SecurityCloudtrailLogBucketName, 'dummy1'}
+      - ${cf:${self:custom.baseName}.ServerlessDeploymentBucketName, 'dummy2'}
+  
+  esbuild:
+    packager: yarn
+    platform: node
+    target: node18
+    bundle: true
+    minify: true
+    sourcemap: true
+  
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+provider:
+  name: aws
+  region: ${opt:region, 'eu-west-1'}
+  stage: ${opt:stage, 'dev'}
+  stackName: ${self:custom.baseName}
+  deploymentBucket:
+    blockPublicAccess: true
+  
+  architecture: arm64
+  runtime: nodejs18.x
+  memorySize: 256
+  timeout: 30
+  versionFunctions: false
+  logRetentionInDays: 60
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_OPTIONS: "--enable-source-maps"
+
+functions:
+  observer:
+    name: ${self:custom.baseName}-observer
+    handler: functions/observer/index.handler
+    role: ObserverLambdaRole
+    environment:
+      POWERTOOLS_SERVICE_NAME: ${self:custom.baseName}-observer
+      TABLE_NAME: !Ref SecurityCloudtrailTable
+      SNS_TOPIC: !Ref SecurityCloudtrailTopic
+      WHITELIST_IPS: ${self:custom.whitelistIps}
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - aws.sts
+              - aws.ec2
+            detail-type:
+              - AWS API Call via CloudTrail
+
+resources:
+  - ${file(./sls/iam.yml)}
+  - ${file(./sls/dynamodb.yml)}
+  - ${file(./sls/s3.yml)}
+  - ${file(./sls/cloudtrail.yml)}
+  - ${file(./sls/events.yml)}
+  - ${file(./sls/cloudwatch.yml)}
+  - ${file(./sls/logs.yml)}
+  - ${file(./sls/sns.yml)}
+  - ${file(./sls/outputs.yml)}

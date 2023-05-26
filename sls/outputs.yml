@@ -1,0 +1,4 @@
+Outputs:
+
+  SecurityCloudtrailLogBucketName:
+    Value: !Ref SecurityCloudtrailLogBucket

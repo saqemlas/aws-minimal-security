@@ -1,0 +1,55 @@
+{
+    "version": "0",
+    "id": "020da8f1-1978-d4eb-9b1f-017c580d3283",
+    "detail-type": "AWS API Call via CloudTrail",
+    "source": "aws.sts",
+    "account": "0123456789",
+    "time": "2023-05-15T08:53:42Z",
+    "region": "eu-west-1",
+    "resources": [],
+    "detail": {
+        "eventVersion": "1.08",
+        "userIdentity": {
+            "type": "AssumedRole",
+            "principalId": "principal-id:i-0d083791d106c72df",
+            "arn": "arn:aws:sts::0123456789:assumed-role/example-role-name/i-0d083791d106c72df",
+            "accountId": "0123456789",
+            "accessKeyId": "example-key-id",
+            "sessionContext": {
+                "sessionIssuer": {
+                    "type": "Role",
+                    "principalId": "principal-id",
+                    "arn": "arn:aws:iam::0123456789:role/example-role-name",
+                    "accountId": "0123456789",
+                    "userName": "example-role-name"
+                },
+                "webIdFederationData": {},
+                "attributes": {
+                    "creationDate": "2023-05-15T08:33:50Z",
+                    "mfaAuthenticated": "false"
+                },
+                "ec2RoleDelivery": "2.0"
+            }
+        },
+        "eventTime": "2023-05-15T08:53:42Z",
+        "eventSource": "sts.amazonaws.com",
+        "eventName": "GetCallerIdentity",
+        "awsRegion": "eu-west-1",
+        "sourceIPAddress": "123.456.789.012",
+        "userAgent": "aws-cli/2.9.19 Python/3.9.16 Linux/6.1.25-37.47.amzn2023.aarch64 source/aarch64.amzn.2023 prompt/off command/sts.get-caller-identity",
+        "requestParameters": null,
+        "responseElements": null,
+        "requestID": "5e2e88ff-1825-427a-a1a6-5f9bf55ae2c8",
+        "eventID": "1900c75e-acdc-4535-9a2b-590a5497b71e",
+        "readOnly": true,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "0123456789",
+        "eventCategory": "Management",
+        "tlsDetails": {
+            "tlsVersion": "TLSv1.2",
+            "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+            "clientProvidedHostHeader": "sts.eu-west-1.amazonaws.com"
+        }
+    }
+}

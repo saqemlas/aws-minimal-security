@@ -1,0 +1,19 @@
+Resources:
+
+  SecurityCloudtrailLog:
+    DependsOn: 
+      - SecurityCloudtrailLogBucketAccessPolicy
+      - SecurityCloudtrailLogRole
+      - SecurityCloudtrailTopicPolicy
+    Type: AWS::CloudTrail::Trail
+    Properties:
+      TrailName: ${self:custom.baseName}-security-trail
+      IsLogging: true
+      IsMultiRegionTrail: true
+      IncludeGlobalServiceEvents: true
+      EventSelectors: 
+        - IncludeManagementEvents: true
+          ReadWriteType: All
+      S3BucketName: !Ref SecurityCloudtrailLogBucket
+      CloudWatchLogsLogGroupArn: !GetAtt SecurityCloudtrailLogGroup.Arn
+      CloudWatchLogsRoleArn: !GetAtt SecurityCloudtrailLogRole.Arn

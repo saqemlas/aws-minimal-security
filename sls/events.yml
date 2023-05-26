@@ -1,0 +1,150 @@
+Resources:
+
+  EventsRuleRootSignIn:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Monitor root AWS Console sign-in events
+      EventPattern:
+        detail-type:
+          - AWS Console Sign In via CloudTrail
+        detail:
+          userIdentity:
+            type:
+              - Root
+      Name: !Sub "${AWS::StackName}-RootActivityRule"
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+
+  EventRuleCTChange:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: detect-cloudtrail-changes
+      Description: Monitor change on CloudTrail setup
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+      EventPattern:
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - cloudtrail.amazonaws.com
+          eventName:
+            - StopLogging
+            - DeleteTrail
+            - UpdateTrail
+
+  EventRuleHealth:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: detect-aws-health-events
+      Description: Monitor AWS Health Dashboard events
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+      EventPattern:
+        detail-type:
+          - AWS Health Event
+        source:
+          - aws.health
+
+  EventRuleIAMUsers:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: detect-iam-user-changes
+      Description: Monitor IAM Users changes
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+      EventPattern:
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - iam.amazonaws.com
+          eventName:
+            - AddUserToGroup
+            - ChangePassword
+            - CreateAccessKey
+            - DeleteAccessKey
+            - CreateUser
+            - DeleteUser
+            - UpdateAccessKey
+            - UpdateGroup
+            - UpdateUser
+            - AttachGroupPolicy
+            - AttachUserPolicy
+            - DeleteUserPolicy
+            - DetachGroupPolicy
+            - DetachUserPolicy
+            - PutUserPolicy
+
+  EventRuleMFAChanges:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: detect-iam-mfa-changes
+      Description: Monitor MFA Changes
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+      EventPattern:
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - iam.amazonaws.com
+          eventName:
+            - CreateVirtualMFADevice
+            - DeactivateMFADevice
+            - DeleteVirtualMFADevice
+            - EnableMFADevice
+            - ResyncMFADevice
+
+  EventRuleExfilDisk:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: detect-disk-exfiltration
+      Description: Detect exfiltration on EBS Snapshot or AMI (sharing)
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+      EventPattern:
+        source:
+          - aws.ec2
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - ec2.amazonaws.com
+          eventName:
+            - ModifySnapshotAttribute
+            - ModifyImageAttribute
+            - SharedSnapshotCopyInitiated
+            - SharedSnapshotVolumeCreated
+
+  EventRuleStsWhoAmI:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: detect-sts-whoami
+      Description: Detect STS get-caller-identity
+      State: ENABLED
+      Targets:
+        - Arn: !Ref SecurityCloudtrailTopic
+          Id: SecurityCloudtrailTopic
+      EventPattern:
+        source:
+          - aws.sts
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - sts.amazonaws.com
+          eventName:
+            - GetCallerIdentity

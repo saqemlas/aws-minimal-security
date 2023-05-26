@@ -1,0 +1,69 @@
+{
+    "version": "0",
+    "id": "c072844e-a476-3630-67cc-7c36fae86a38",
+    "detail-type": "AWS API Call via CloudTrail",
+    "source": "aws.ec2",
+    "account": "0123456789",
+    "time": "2023-05-17T13:59:32Z",
+    "region": "eu-west-1",
+    "resources": [],
+    "detail": {
+        "eventVersion": "1.08",
+        "userIdentity": {
+            "type": "IAMUser",
+            "principalId": "AIDAWJGKBFHFGE5BXPQV7",
+            "arn": "arn:aws:iam::0123456789:user/username",
+            "accountId": "0123456789",
+            "userName": "username",
+            "sessionContext": {
+                "sessionIssuer": {},
+                "webIdFederationData": {},
+                "attributes": {
+                    "creationDate": "2023-05-17T13:59:29Z",
+                    "mfaAuthenticated": "false"
+                }
+            },
+            "invokedBy": "cloudformation.amazonaws.com"
+        },
+        "eventTime": "2023-05-17T13:59:32Z",
+        "eventSource": "ec2.amazonaws.com",
+        "eventName": "TerminateInstances",
+        "awsRegion": "eu-west-1",
+        "sourceIPAddress": "cloudformation.amazonaws.com",
+        "userAgent": "cloudformation.amazonaws.com",
+        "requestParameters": {
+            "instancesSet": {
+                "items": [
+                    {
+                        "instanceId": "i-0895c07e6e93a3556"
+                    }
+                ]
+            }
+        },
+        "responseElements": {
+            "requestId": "237152bb-bff7-4676-aeae-e170e70d040f",
+            "instancesSet": {
+                "items": [
+                    {
+                        "instanceId": "i-0895c07e6e93a3556",
+                        "currentState": {
+                            "code": 32,
+                            "name": "shutting-down"
+                        },
+                        "previousState": {
+                            "code": 16,
+                            "name": "running"
+                        }
+                    }
+                ]
+            }
+        },
+        "requestID": "237152bb-bff7-4676-aeae-e170e70d040f",
+        "eventID": "f4db2fc3-5a82-4573-ad7b-80fca5e233ed",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "0123456789",
+        "eventCategory": "Management"
+    }
+}
